@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Torus with Info</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+    <script>
+        let showInfo = false; // Variable para controlar si se muestra la información
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight, WEBGL);
+        }
+
+        function draw() {
+            background(0);
+            orbitControl();
+
+            // Dibuja el toroide
+            push();
+            normalMaterial();
+            rotateZ(frameCount * 0.01);
+            rotateX(frameCount * 0.01);
+            rotateY(frameCount * 0.01);
+            torus(80, 45);
+            pop();
+
+            // Dibuja un círculo indicando el área seleccionable
+            push();
+            noFill();
+            stroke(255, 0, 0); // Color rojo para el círculo
+            strokeWeight(2);
+            ellipse(0, 0, 200); // Dibuja un círculo con diámetro 200 píxeles
+            pop();
+
+            // Muestra la información si showInfo es true
+            if (showInfo) {
+                displayInfo();
+            }
+        }
+
+        function mousePressed() {
+            // Transformar coordenadas de pantalla a coordenadas de canvas (p5.js maneja el lienzo 3D en WEBGL)
+            let xCenter = width / 2; // Centro en coordenadas 2D
+            let yCenter = height / 2;
+
+            // Calcula la distancia del clic al centro
+            let distance = dist(mouseX, mouseY, xCenter, yCenter);
+
+            // Si el clic está dentro del rango, alterna la información
+            if (distance < 100) { // 100 es el radio de selección
+                showInfo = !showInfo;
+            }
+        }
+
+        function displayInfo() {
+            push();
+            fill(0, 0, 0, 200); // Fondo negro translúcido
+            noStroke();
+            rectMode(CENTER);
+            rect(0, -height / 4, 400, 150); // Fondo del texto
+
+            // Cambiar color del texto
+            fill(255); // Texto blanco
+            textSize(16);
+            textAlign(CENTER, CENTER); // Alineación al centro
+
+            // Divide el texto en líneas para mostrarlo correctamente
+            const infoLines = [
+                "Figura: Torus (Toroide)",
+                "Radio principal: 80",
+                "Radio del tubo: 45",
+                "Descripción: Figura tridimensional con forma de rosquilla."
+            ];
+
+            // Dibuja cada línea con un desplazamiento vertical
+            let yOffset = -height / 4 - 50; // Empieza un poco más arriba
+            for (let i = 0; i < infoLines.length; i++) {
+                text(infoLines[i], 0, yOffset + i * 25); // Ajusta el espaciado entre líneas
+            }
+            pop();
+        }
+    </script>
+</body>
+</html>
